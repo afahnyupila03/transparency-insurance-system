@@ -19,7 +19,7 @@ const userSchema = new Schema(
       enum: ['enabled', 'disabled'],
       default: 'enabled'
     },
-    cars: {
+    car: {
       type: Schema.Types.ObjectId,
       ref: 'Car'
     }
