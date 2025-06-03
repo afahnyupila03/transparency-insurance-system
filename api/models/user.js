@@ -15,7 +15,7 @@ const userSchema = new Schema(
     name: { type: String, trim: true },
     phone: { type: Number },
     status: {
-      type: Boolean,
+      type: String,
       enum: ['enabled', 'disabled'],
       default: 'enabled'
     },

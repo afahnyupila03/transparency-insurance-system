@@ -1,9 +1,8 @@
 import jwt from 'jsonwebtoken'
-import User from './../models/user'
-import Logout from '../../models/logout'
+import User from './../models/user.js'
+import Logout from './../models/logout.js'
 import { StatusCodes } from 'http-status-codes'
 import bcrypt from 'bcrypt'
-import { models } from './../node_modules/mongoose/types/index.d'
 
 const generateToken = user =>
   jwt.sign(
@@ -17,7 +16,7 @@ const generateToken = user =>
     }
   )
 
-export const authentications = {
+export const userProfiles = {
   register: async (req, res) => {
     try {
       const { email, password } = req.body
@@ -26,7 +25,7 @@ export const authentications = {
 
       if (existingUser) {
         return res.status(StatusCodes.BAD_REQUEST).json({
-          message: 'User with account already exist.'
+          error: 'User with account already exist.'
         })
       }
 
@@ -41,7 +40,7 @@ export const authentications = {
 
       const token = generateToken(data)
 
-      res.status(StatusCodes.OK).json({
+      res.status(StatusCodes.CREATED).json({
         message: 'User created',
         data,
         token
@@ -60,7 +59,7 @@ export const authentications = {
 
       if (!user) {
         return res.status(StatusCodes.BAD_REQUEST).json({
-          message: 'No user with email exist, please create account.'
+          error: 'No user with email exist, please create account.'
         })
       }
 
@@ -68,13 +67,13 @@ export const authentications = {
 
       if (!passwordMatch) {
         return res.status(StatusCodes.BAD_REQUEST).json({
-          message: 'Wrong password, please enter correct password'
+          error: 'Wrong password, please enter correct password'
         })
       }
 
       const token = generateToken(user)
 
-      res.status(StatusCodes.OK).json({
+      res.status(StatusCodes.CREATED).json({
         message: 'login to profile completed',
         data: user,
         token
@@ -86,9 +85,60 @@ export const authentications = {
       })
     }
   },
+  updateProfile: async (req, res) => {
+    try {
+      const { name, phone } = req.body
+      const userId = req.user.id
+
+      // if (!userId) {
+      //   return res.status(StatusCodes.UNAUTHORIZED).json({
+      //     error: 'Please authenticate account to update profile.'
+      //   })
+      // }
+
+      // Check if another user already has this name
+      const nameExists = await User.findOne({ name, _id: { $ne: userId } })
+      if (nameExists) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          error: 'Another user with this name already exists.'
+        })
+      }
+
+      // Check if another user already has this phone
+      const phoneExists = await User.findOne({ phone, _id: { $ne: userId } })
+      if (phoneExists) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          error: 'Another user with this phone number already exists.'
+        })
+      }
+
+      // Update the user
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { name, phone },
+        { new: true, runValidators: true }
+      )
+
+      res.status(StatusCodes.CREATED).json({
+        message: 'User profile updated.',
+        data: updatedUser
+      })
+    } catch (error) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Error updating user profile',
+        error: error.message
+      })
+    }
+  },
   getUser: async (req, res) => {
     try {
       const userId = req.userId
+
+      // if (!userId) {
+      //   return res.status(StatusCodes.UNAUTHORIZED).json({
+      //     error: 'No user found, please authenticate account.'
+      //   })
+      // }
 
       const user = await User.findById(userId)
         .select('-password')
@@ -96,7 +146,7 @@ export const authentications = {
 
       if (!user) {
         return res.status(StatusCodes.BAD_REQUEST).json({
-          message: 'No user found, please authenticate account.'
+          error: 'User profile not found'
         })
       }
 
@@ -125,7 +175,7 @@ export const authentications = {
 
       if (!token) {
         return res.status(StatusCodes.BAD_REQUEST).json({
-          message: 'Token missing'
+          error: 'Token missing'
         })
       }
 

@@ -1,9 +1,18 @@
-var express = require('express');
-var router = express.Router();
+import express from 'express'
+import { carRoutes } from './car.js'
+import { authRoutes } from './auth.js'
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+const router = express.Router()
 
-module.exports = router;
+// const appRoute = router
+
+// Routes for app.
+authRoutes(router)
+carRoutes(router)
+
+// /* GET home page. */
+// router.get('/', function (req, res, next) {
+//   res.render('index', { title: 'Express' })
+// })
+
+export default router
