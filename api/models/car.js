@@ -109,6 +109,10 @@ const carSchema = new Schema(
       type: String,
       enum: ['enabled', 'disabled', 'deleted'],
       default: 'enabled'
+    },
+    policy: {
+      type: Schema.Types.ObjectId,
+      ref: 'Policy'
     }
   },
   { timestamps: true }
