@@ -1,6 +1,8 @@
 
 # Transparency Insurance System
 
+
+
 A full-stack web application that empowers users to transparently manage and understand their car insurance coverage. Users can register, add multiple car profiles, and instantly view how long their insurance will last or calculate the cost for a selected coverage period. The backend computes coverage details based on user input and car profiles, returning results to the frontend for display.
 
 ---
