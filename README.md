@@ -37,7 +37,7 @@ A full-stack web application that empowers users to transparently manage and und
 
 ## Tech Stack
 
-- **Frontend:** React, React Router, Tailwind CSS, TypeScript, Vite
+- **Frontend:** React, React Router, CSS, Vite
 - **Backend:** Node.js, Express.js
 - **Database:** MongoDB, Mongoose
 
@@ -84,7 +84,7 @@ A full-stack web application that empowers users to transparently manage and und
   - [ ] Handle API errors and display user-friendly messages
 
 - **UI/UX**
-  - [ ] Responsive layout with Tailwind CSS *(tentative)
+  - [ ] Responsive layout with TCSS *(tentative)
   - [ ] Navigation bar and routing (React Router) *(tentative)
   - [ ] Consistent theming and accessibility
 
@@ -141,4 +141,12 @@ A full-stack web application that empowers users to transparently manage and und
    ```sh
    git clone https://github.com/your-org/transparency-insurance-system.git
    cd transparency-insurance-system
+2. **Navigate to the FrontEnd folder and run the frontend application:**
+   ```sh
+   cd FrontEnd
+   npm install
+   npm run dev
+
+   The frontend will start on http://localhost:5173 by default.
+
 
