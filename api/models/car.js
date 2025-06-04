@@ -60,13 +60,13 @@ const carSchema = new Schema(
       immutable: true
     },
     energy: {
-      type: Number,
+      type: String,
       trim: true,
       required: true,
       match: /^[A-Z]{2,}$/
     },
     hpRating: {
-      type: String,
+      type: Number,
       required: true,
       immutable: true
     },
@@ -110,10 +110,10 @@ const carSchema = new Schema(
       enum: ['enabled', 'disabled', 'deleted'],
       default: 'enabled'
     },
-    policy: {
+    policy: [{
       type: Schema.Types.ObjectId,
       ref: 'Policy'
-    }
+    }]
   },
   { timestamps: true }
 )

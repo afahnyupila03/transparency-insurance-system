@@ -5,7 +5,7 @@ export const responsibilityRates = [
         price: 3000
     },
     {
-        name: 'FC',
+        name: 'Fichie Central',
         price: 1000
     },
     {

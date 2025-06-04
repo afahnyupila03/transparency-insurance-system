@@ -13,7 +13,7 @@ const dtaSchema = new Schema({
     type: Number,
     required: true
   }
-})
+}, {timestamps: true})
 
 const DTA = mongoose.model('DTA', dtaSchema)
 export default DTA

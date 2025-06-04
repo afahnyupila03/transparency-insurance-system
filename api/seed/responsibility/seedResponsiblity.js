@@ -1,4 +1,3 @@
-import mongoose from 'mongoose'
 import { responsibilityRates } from './responsibilities.js'
 import Responsibility from '../../models/responsibility.js'
 
