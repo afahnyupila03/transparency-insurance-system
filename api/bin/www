@@ -3,16 +3,27 @@
 import http from 'http'
 import debugLib from 'debug'
 import app from '../app.js'
-import seedPolicyRates from '../seed/seedPolicyRates.js' // <-- Import the seeding function
+import mongoose from 'mongoose'
+import seedPolicyRates from '../seed/policy/seedPolicyRates.js' // <-- Import the seeding function
+import seedResponsibility from '../seed/responsibility/seedResponsiblity.js'
+import seedDtaRates from '../seed/dta/seedDtaRates.js'
 
 const debug = debugLib('api:server')
 const port = normalizePort(process.env.PORT || '3000')
 app.set('port', port)
 
+const MONGO_URI = 'mongodb+srv://fulopila9:9qVjS5mTfmDVn2G2@cluster0.9mx0z.mongodb.net/TransparencyInsurance'
+
+
 async function startServer () {
   try {
-    // Seed only if needed (optional logic)
+
+    await mongoose.connect(MONGO_URI)
+    
+    // Seed all data.
     await seedPolicyRates()
+    await seedResponsibility()
+    await seedDtaRates()
 
     // Start server AFTER seeding
     const server = http.createServer(app)
