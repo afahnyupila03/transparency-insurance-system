@@ -4,6 +4,8 @@ import Car from '../models/car.js'
 import Responsibility from './../models/responsibility.js'
 import DTA from '../models/dta.js'
 import Zone from '../models/zone.js'
+import User from '../models/user.js'
+import Quotation from '../models/quotations.js'
 
 export const carPolicies = {
   getEligiblePolicies: async (req, res) => {
@@ -105,26 +107,128 @@ export const carPolicies = {
     try {
       const userId = req.user.id
 
-      const {id} = req.params
-      const {zone} = req.query
+      const { id } = req.params
+      const { zone } = req.query
 
-      const {tariff, period, acc, cr, fc} = req.body
+      const { tariff, period, acc, cr, fc } = req.body
       let dta = req.body.dta // for safety
 
+      const car = await Car.findOne({ _id: id, user: userId })
+      if (!car) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          error: 'Selected vehicle not found.'
+        })
+      }
+      const regNum = car.regNum
 
-      // calculations
-      const discount = tariff * 0.10
-      const TPN = tariff - discount
+      const location = await Zone.findOne({ zone })
+      if (!location) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          error: 'Zone not found'
+        })
+      }
 
+      // Apply base 10% discount.
+      let discount = tariff - tariff * 0.1
+
+      // Apply additional discount based on period
       const validPeriod = parseInt(period)
-      // if ( validPeriod === 2)
+      let extraDiscount
 
+      if (validPeriod === 2) {
+        extraDiscount = 0.2
+      }
+      if (validPeriod === 4) {
+        extraDiscount = 0.4
+      }
+      if (validPeriod === 6) {
+        extraDiscount = 0.6
+      }
+      if (validPeriod === 8 || validPeriod === 10) {
+        extraDiscount = 0.8
+      }
 
+      discount = discount * extraDiscount
+
+      const vat = acc + TPN * 0.1925
+
+      let total
+      if (dta) {
+        total = TPN + vat + acc + fc + cr + dta
+      } else {
+        total = TPN + vat + acc + fc + cr
+      }
+
+      let data
+      if (dta) {
+        data = { total, vat, fc, cr, tariff, discount, dta }
+      } else {
+        data = { total, vat, fc, cr, tariff, discount }
+      }
+
+      res.status(StatusCodes.CREATED).json({
+        message: `Insurance quotation for vehicle with reg number ${regNum} and zone {location.type}({location.name})`,
+        data
+      })
     } catch (error) {
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: 'Failed to calculate insurance quotation',
-      error: error.message
-    })
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Failed to calculate insurance quotation',
+        error: error.message
+      })
+    }
+  },
+  saveQuotation: async (req, res) => {
+    try {
+      const { id } = req.params
+      const { zone } = req.query
+      const userId = req.user.id
+
+      const { total, vat, fc, tariff, discount } = req.body
+      let dta = req.body.dta
+
+      const user = await User.findById(userId)
+
+      const car = await Car.findOne({ _id: id, user: userId })
+      if (!car) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          error: 'Selected vehicle not found.'
+        })
+      }
+      const carId = car._id
+
+      const location = await Zone.findOne({ zone })
+      if (!location) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          error: 'Zone not found'
+        })
+      }
+      const zoneId = location._id
+
+      const insurance = new Quotation({
+        total,
+        vat,
+        fc,
+        tariff,
+        discount,
+        dta,
+        zone: zoneId,
+        user: userId,
+        car: carId
+      })
+
+      const quotation = await insurance.save()
+      car.quotation.push(quotation._id)
+      await car.save()
+
+      res.status(StatusCodes.Ok).json({
+        message: 'Quotation saved',
+        data: quotation
+      })
+    } catch (error) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Failed to save insurance quotation',
+        error: error.message
+      })
+    }
   }
-  } 
 }

@@ -110,10 +110,13 @@ const carSchema = new Schema(
       enum: ['enabled', 'disabled', 'deleted'],
       default: 'enabled'
     },
-    policy: [{
-      type: Schema.Types.ObjectId,
-      ref: 'Policy'
-    }]
+    policy: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Policy'
+      }
+    ],
+    quotation: [{ type: Schema.Types.ObjectId, ref: 'Quotation' }]
   },
   { timestamps: true }
 )
