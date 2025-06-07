@@ -1,38 +1,79 @@
 import React from 'react'
 import { Field } from 'formik'
+import IconComponent from './IconComponent'
 
-export default function CustomInput ({
+export default function CustomInput({
   id,
   name,
   error,
   touched,
   label,
   rows = 3,
+  type,
+  showPassword,
+  value,
+  togglePassword,
   ...props
 }) {
+  const isError = error[name] && touched[name]
+
   return (
-    <div>
-      <div>
-        <label id={id} htmlFor={id}>
-          {label}
-        </label>
-        <div>
-          {props.as === 'select' ? (
-            <Field as='select' name={name} id={id} {...props} />
-          ) : props.as === 'textarea' ? (
-            <Field
-              as='textarea'
-              name={name}
-              id={id}
-              {...props}
-              rows={rows || 3}
-            />
-          ) : (
-            <Field name={name} id={id} {...props} />
-          )}
-        </div>
-        {error[name] && touched[name] && <p>{error[name]}</p>}
+    <div className="mb-4">
+      <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
+        {label}
+      </label>
+
+      <div className="relative">
+        {props.as === 'select' ? (
+          <Field
+            as="select"
+            name={name}
+            id={id}
+            className={`w-full px-3 py-2 border ${
+              isError ? 'border-red-500' : 'border-gray-300'
+            } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            {...props}
+          />
+        ) : props.as === 'textarea' ? (
+          <Field
+            as="textarea"
+            name={name}
+            id={id}
+            rows={rows}
+            className={`w-full px-3 py-2 border ${
+              isError ? 'border-red-500' : 'border-gray-300'
+            } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            {...props}
+          />
+        ) : (
+          <Field
+            type={type === 'password' && showPassword ? 'text' : type}
+            name={name}
+            id={id}
+            className={`w-full px-3 py-2 pr-10 border ${
+              isError ? 'border-red-500' : 'border-gray-300'
+            } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            {...props}
+          />
+        )}
+
+        {/* Toggle password icon */}
+        {name === 'password' && value && (
+          <button
+            type="button"
+            onClick={togglePassword}
+            className="absolute inset-y-0 right-2 flex items-center text-gray-500"
+          >
+            {showPassword ? (
+              <IconComponent name="IoIosEyeOff" />
+            ) : (
+              <IconComponent name="IoIosEye" />
+            )}
+          </button>
+        )}
       </div>
+
+      {isError && <p className="text-sm text-red-500 mt-1">{error[name]}</p>}
     </div>
   )
 }
