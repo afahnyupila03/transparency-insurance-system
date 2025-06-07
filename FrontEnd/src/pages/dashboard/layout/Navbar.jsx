@@ -1,16 +1,15 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../components/context/AuthContext";
-import "../App.css";
+// import "../App.css";
 
 function Navbar() {
-  const { isAuthenticated, logout } = useAuth();
-  const navigate = useNavigate();
+  // const { isAuthenticated, logout } = useAuth();
+  // const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
+  // const handleLogout = () => {
+  //   // logout();
+  //   navigate("/login");
+  // };
 
   return (
     <nav className="navbar">
@@ -18,7 +17,7 @@ function Navbar() {
         <Link to="/dashboard" className="navbar-title">Transparency Insurance</Link>
       </div>
       <div className="navbar-links">
-        {isAuthenticated ? (
+        {/* {isAuthenticated ? (
           <>
             <Link to="/dashboard">Dashboard</Link>
             <Link to="/car/new">Add Car</Link>
@@ -30,7 +29,7 @@ function Navbar() {
             <Link to="/login">Login</Link>
             <Link to="/register">Register</Link>
           </>
-        )}
+        )} */}
       </div>
     </nav>
   );

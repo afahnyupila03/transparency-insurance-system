@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../components/context/AuthContext";
+import { useAuth } from "../store/context";
 import "../App.css";
 
 function InsuranceCalculator() {
