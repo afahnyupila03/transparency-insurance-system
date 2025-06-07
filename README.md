@@ -156,5 +156,3 @@ The API server should now be running on http://localhost:3000. You can test this
    npm run dev
 
    The frontend will start on http://localhost:5173 by default.
-
-

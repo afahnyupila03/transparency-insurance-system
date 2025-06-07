@@ -22,7 +22,8 @@ app.use(cookieParser())
 // CORS settings
 app.use(
   cors({
-    origin: '*',
+    origin: 'http://localhost:5173', // Adjust this to your frontend URL
+    // origin: 'https://insureconnect.vercel.app', // For production
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
@@ -35,11 +36,11 @@ app.get('/', (req, res) => {
 })
 
 // Routes
-app.use(UserRoutes)
+app.use('/api', UserRoutes)
 
 // MongoDB connection
 const MONGO_URI =
-  'mongodb+srv://fulopila9:9qVjS5mTfmDVn2G2@cluster0.xzpen8o.mongodb.net/InsureConnect'
+  'mongodb+srv://tatawclarkson:Sapphire05040@cluster0.xzpen8o.mongodb.net/InsureConnect'
 
 // Run server immediately, and seed in background
 mongoose

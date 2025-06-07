@@ -67,7 +67,10 @@ export const carProfiles = {
         firstYear,
         user: user._id
       })
-
+console.log('Creating car with:', {
+  regNum, name, address, genre, type, mark, chassisNumber,
+  energy, hpRating, numberOfSeats, carryingCapacity, firstYear, userId
+});
       const data = await car.save()
 
       user.car.push(data._id)
@@ -80,9 +83,10 @@ export const carProfiles = {
         data
       })
     } catch (error) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        message: 'Error creating user car profile',
-        error: error.message
+  console.error('Error in createCar:', error);
+  return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+    message: 'Error creating user car profile',
+    error: error.message
       })
     }
   },

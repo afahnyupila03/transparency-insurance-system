@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
+const API_BASE = "http://localhost:3000"; // <-- Your backend base URL
+
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
@@ -8,7 +10,7 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     if (token) {
-      fetch("/api/users/me", {
+      fetch(`${API_BASE}/api/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then(res => {
@@ -26,29 +28,40 @@ export function AuthProvider({ children }) {
     }
   }, [token]);
 
-  const login = async (email, password) => {
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-    if (!res.ok) throw new Error("Invalid credentials");
-    const data = await res.json();
-    setToken(data.token);
-    localStorage.setItem("token", data.token);
-  };
+const login = async (email, password) => {
+  const res = await fetch(`${API_BASE}/api/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+  let data;
+  try {
+    data = await res.json();
+  } catch (e) {
+    throw new Error("Server error: Invalid JSON response");
+  }
+  if (!res.ok) throw new Error(data.message || "LogIn failed");
+  setToken(data.token);
+  localStorage.setItem("token", data.token);
+};
 
-  const register = async ({ email, password, name }) => {
-    const res = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, name }),
-    });
-    if (!res.ok) throw new Error("Registration failed");
-    const data = await res.json();
-    setToken(data.token);
-    localStorage.setItem("token", data.token);
-  };
+const register = async ({ email, password }) => {
+  const res = await fetch(`${API_BASE}/api/auth/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+  let data;
+  try {
+    data = await res.json();
+    console.log(data);
+  } catch (e) {
+    throw new Error("Server error: Invalid JSON response");
+  }
+  if (!res.ok) throw new Error(data.message || "Registration failed");
+  setToken(data.token);
+  localStorage.setItem("token", data.token);
+};
 
   const logout = () => {
     setUser(null);

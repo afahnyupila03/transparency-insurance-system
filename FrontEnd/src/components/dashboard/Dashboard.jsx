@@ -8,8 +8,11 @@ function Dashboard() {
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Replace with your actual API base URL
+  const API_BASE = "http://localhost:3000";
+
   useEffect(() => {
-    fetch("/api/cars", {
+    fetch(`${API_BASE}/api/car`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => res.json())
