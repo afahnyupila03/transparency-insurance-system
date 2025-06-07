@@ -1,5 +1,4 @@
-import mongoose from 'mongoose'
-const { Schema } = mongoose
+import mongoose, { Schema } from 'mongoose'
 
 const userSchema = new Schema(
   {
@@ -19,13 +18,13 @@ const userSchema = new Schema(
       enum: ['enabled', 'disabled'],
       default: 'enabled'
     },
-    car: {
+    car: [{
       type: Schema.Types.ObjectId,
       ref: 'Car'
-    },
+    }],
     isCarOwner: { type: Boolean, enum: [true, false], default: false }
   },
-  { timeStamps: true }
+  { timestamps: true }
 )
 
 const User = mongoose.model('User', userSchema)

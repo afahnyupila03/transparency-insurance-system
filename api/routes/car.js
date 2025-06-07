@@ -16,13 +16,13 @@ export const carRoutes = router => {
     carProfiles.viewCar
   )
   router.put(
-    '/update-car',
+    '/update-car/:id',
     middlewares.auth,
     middlewares.carOwner,
     carProfiles.editCar
   )
   router.put(
-    '/update-car-status',
+    '/update-car-status/:id',
     middlewares.auth,
     middlewares.carOwner,
     carProfiles.carStatus

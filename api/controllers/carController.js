@@ -17,7 +17,7 @@ export const carProfiles = {
         chassisNumber,
         energy,
         hpRating,
-        numOfSeats,
+        numberOfSeats,
         carryingCapacity,
         firstYear
       } = req.body
@@ -61,9 +61,9 @@ export const carProfiles = {
         mark,
         chassisNumber,
         energy,
-        hpRating,
-        numOfSeats,
-        carryingCapacity,
+        hpRating: parseInt(hpRating),
+        numberOfSeats: parseInt(numberOfSeats),
+        carryingCapacity: parseInt(carryingCapacity),
         firstYear,
         user: user._id
       })
@@ -162,7 +162,7 @@ export const carProfiles = {
 
       const car = await Car.findOne({ _id: id, user: userId }).populate(
         'user',
-        'name, email, phone'
+        'name email phone'
       )
 
       if (!car) {

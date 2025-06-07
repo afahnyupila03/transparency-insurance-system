@@ -42,6 +42,16 @@ A full-stack web application that empowers users to transparently manage and und
 ---
 
 ## Getting Started
+After cloning the repository, follow the steps below to set up and run the project:
+
+1. Switch to the develop branch+
+git checkout develop
+
+2. Set up the API server
+cd api
+yarn install      # Install all backend dependencies
+yarn start        # Start the API server
+The API server should now be running on http://localhost:3000. You can test this by opening the URL in your browser.
 
 ### Prerequisites
 
