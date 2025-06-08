@@ -37,7 +37,6 @@ export const useCreateCar = () => {
   const { mutateAsync: createCar } = useMutation({
     mutationFn: payload => createCarService(payload),
     onSuccess: data => {
-      toast.success('Car created successfully!')
       queryClient.setQueryData(['cars'], old =>
         old ? [...old, data.data] : [data.data]
       )
@@ -46,8 +45,12 @@ export const useCreateCar = () => {
       console.error('Failed to create car: ', error)
       toast.error('Could not create car, please try again.')
     },
-    onSettled: () => {
+    onSettled: (data, error) => {
       queryClient.invalidateQueries({ queryKey: ['cars'] })
+
+      if (!error && data?.data) {
+        toast.success('Car created successfully!')
+      }
     }
   })
 
@@ -61,18 +64,21 @@ export const useUpdateCar = () => {
     mutationFn: ({ id, payload }) => updateCarService(id, payload),
 
     onSuccess: (_, { id }) => {
-      toast.success('Car profile updated successfully!')
       queryClient.invalidateQueries({ queryKey: ['cars'] })
       queryClient.invalidateQueries({ queryKey: ['car', id] })
     },
 
-    onSettled: (_, __, { id }) => {
+    onSettled: (data, error, { id }) => {
       queryClient.invalidateQueries({
         queryKey: ['cars']
       })
       queryClient.invalidateQueries({
         queryKey: ['car', id]
       })
+
+      if (!error && data?.data) {
+        toast.success('Car profile updated successfully!')
+      }
     },
 
     onError: error => {
@@ -90,17 +96,20 @@ export const useUpdateCarStatus = () => {
   const { mutateAsync: updateCarStatus } = useMutation({
     mutationFn: ({ id, status }) => updateCarStatusService(id, status),
     onSuccess: (_, { id }) => {
-      toast.success('Car profile status updated successfully')
       queryClient.invalidateQueries({
         queryKey: ['car', id]
       })
       queryClient.invalidateQueries({ queryKey: ['cars'] })
     },
-    onSettled: (_, __, { id }) => {
+    onSettled: (data, error, { id }) => {
       queryClient.invalidateQueries({
         queryKey: ['car', id]
       })
       queryClient.invalidateQueries({ queryKey: ['cars'] })
+
+      if (!error && data?.data) {
+        toast.success('Car profile status updated successfully')
+      }
     },
     onError: error => {
       console.error('Error update car profile status: ', error)

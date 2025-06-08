@@ -1,4 +1,5 @@
 import Authentication from '../pages/auth/Authentication'
+import CreateCarPage from '../pages/createCar'
 import Dashboard from '../pages/dashboard/Dashboard'
 
 export const mainNavigation = [
@@ -9,5 +10,9 @@ export const mainNavigation = [
   {
     path: 'dashboard',
     element: <Dashboard />
+  }, 
+  {
+    path: 'create-car',
+    element: <CreateCarPage />
   }
 ]

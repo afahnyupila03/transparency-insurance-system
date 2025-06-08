@@ -54,7 +54,7 @@ export const carPolicies = {
       let fuel
       if (energy === 'ESS' || energy === 'ESSENCE' || energy === 'PATROL') {
         fuel = 'ESSENCE'
-      } else if (energy === 'GAS OIL' || energy === 'DIESEL') {
+      } else if (energy === 'GAS OIL' || energy === 'DIESEL' || energy === 'GAS') {
         fuel = 'DIESEL'
       }
 
