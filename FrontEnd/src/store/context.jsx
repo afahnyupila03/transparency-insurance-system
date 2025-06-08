@@ -82,8 +82,7 @@ export const AppProvider = ({ children }) => {
 
     const data = await res.json()
 
-    if (!res.ok)
-      throw new Error(data.error || data.message || 'Something went wrong')
+    if (!res.ok) throw new Error(data.error || 'Something went wrong')
 
     return data
   }
@@ -280,7 +279,7 @@ export const AppProvider = ({ children }) => {
       // Save current path before directing to login.
       localStorage.setItem('redirectAfterAuth', pathname)
       console.log('redirectAfterAuth: ', pathname)
-      navigate('/authentication', { replace: true })
+      // navigate('/authentication', { replace: true })
 
       dispatch({
         type: CONSTANTS.SET_LOADING,
