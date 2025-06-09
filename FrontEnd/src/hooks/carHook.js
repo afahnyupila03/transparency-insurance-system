@@ -18,7 +18,9 @@ export const useCars = () => {
     staleTime: 10 * 60 * 1000
   })
 
-  return { data, refetch, isLoading, isError, error }
+  const cars =data?.data
+
+  return { cars, refetch, isLoading, isError, error }
 }
 
 export const useCar = id => {

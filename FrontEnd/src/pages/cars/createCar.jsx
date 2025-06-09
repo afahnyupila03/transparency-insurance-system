@@ -1,19 +1,11 @@
 import { Form, Formik } from 'formik'
-import CustomInput from '../components/customInput'
-import { useCreateCar } from '../hooks/carHook'
+import CustomInput from '../../components/customInput'
+import { useCar, useCreateCar, useUpdateCar } from '../../hooks/carHook'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 
 export default function CreateCarPage () {
-  const createCar = useCreateCar()
-
-  const createCarHandler = async values => {
-    try {
-      await createCar(values)
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  const initialValues = {
+  const [initialValues, setInitialValues] = useState({
     regNum: '',
     name: '',
     address: '',
@@ -26,28 +18,127 @@ export default function CreateCarPage () {
     numberOfSeats: '',
     hpRating: '',
     carryingCapacity: ''
+  })
+
+  const createCar = useCreateCar()
+  const updateCar = useUpdateCar()
+
+  const navigate = useNavigate()
+  const params = useParams()
+  const [search] = useSearchParams()
+
+  const carId = params.id
+  const editing = search.get('editing') === 'true'
+
+  const { data, isLoading, isError, error } = useCar(carId)
+
+  useEffect(() => {
+    if (carId && editing && data) {
+      console.log('to be edited: ', data)
+      const {
+        regNum,
+        name,
+        address,
+        energy,
+        genre,
+        mark,
+        type,
+        chassisNumber,
+        firstYear,
+        numberOfSeats,
+        hpRating,
+        carryingCapacity
+      } = data.data
+
+      console.log('first year: ', firstYear)
+
+      setInitialValues({
+        regNum: regNum,
+        name: name,
+        address: address,
+        genre: genre,
+        mark: mark,
+        type: type,
+        chassisNumber: chassisNumber,
+        firstYear: new Date(firstYear).toISOString().split('T')[0],
+        energy: energy,
+        numberOfSeats: numberOfSeats,
+        hpRating: hpRating,
+        carryingCapacity: carryingCapacity
+      })
+    }
+  }, [data, editing, carId])
+
+  const createCarHandler = async (values, actions) => {
+    try {
+      await createCar(values)
+      actions.setSubmitting(false)
+      actions.resetForm({
+        values: initialValues
+      })
+      navigate('/dashboard')
+    } catch (error) {
+      console.error(error)
+      actions.setSubmitting(false)
+    }
+  }
+
+  const editCarHandler = async (values, actions) => {
+    const payload = {
+      name: values.name,
+      regNum: values.regNum,
+      address: values.address,
+      energy: values.energy,
+      genre: values.genre
+    }
+
+    await updateCar({ id: carId, payload })
+    actions.setSubmitting(false)
+    navigate('/cars')
   }
 
   const ENERGY_TYPES = [
-    { label: 'Essence', key: 'ESS' },
-    { label: 'Diesel', key: 'GAS' }
+    { label: 'Essence (ESS)', key: 'ESS' },
+    { label: 'Diesel (GAS)', key: 'GAS' }
   ]
+
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center min-h-screen'>
+        <p className='text-gray-600 text-lg'>Loading car profiles...</p>
+      </div>
+    )
+  }
+
+  if (isError) {
+    return (
+      <div className='flex items-center justify-center min-h-screen'>
+        <p className='text-gray-600 text-lg'>{error}</p>
+      </div>
+    )
+  }
 
   return (
     <div className='max-w-2xl mx-auto p-6 mt-10 bg-white rounded shadow-md'>
       <h2 className='text-2xl font-semibold mb-4 text-center'>
-        Create Car Profile
+        {editing ? 'Update Car Profile' : 'Create Car Profile'}
       </h2>
 
-      <p className='text-sm text-gray-700 mb-6 text-center'>
-        <span className='font-bold text-red-500'>*</span> Please enter your car
-        details as on your
-        <span className='italic'> certificat d'immatriculation </span>
-        (registration certificate)
-        <span className='font-bold text-red-500'>*</span>
-      </p>
+      {editing ? null : (
+        <p className='text-sm text-gray-700 mb-6 text-center'>
+          <span className='font-bold text-red-500'>*</span> Please enter your
+          car details as on your
+          <span className='italic'> certificat d'immatriculation </span>
+          (registration certificate)
+          <span className='font-bold text-red-500'>*</span>
+        </p>
+      )}
 
-      <Formik onSubmit={createCarHandler} initialValues={initialValues}>
+      <Formik
+        enableReinitialize={true}
+        onSubmit={editing ? editCarHandler : createCarHandler}
+        initialValues={initialValues}
+      >
         {({
           values,
           handleBlur,
@@ -68,7 +159,7 @@ export default function CreateCarPage () {
               error={errors}
               touched={touched}
               autoComplete='off'
-              label='(Registration number)'
+              label="N° d'immaticulation (Registration number)"
               placeholder="N° d'immaticulation (Registration number)"
               autoCapitalize='characters'
             />
@@ -122,8 +213,8 @@ export default function CreateCarPage () {
               id='mark'
               name='mark'
               type='text'
-              placeholder='Marque du vehicule (Make)'
-              label='Marque du vehicule (Make)'
+              placeholder='Marque du vehicule (Mark)'
+              label='Marque du vehicule (Mark)'
               value={values.mark}
               onChange={handleChange}
               onBlur={handleBlur}
@@ -131,6 +222,7 @@ export default function CreateCarPage () {
               touched={touched}
               autoComplete='off'
               autoCapitalize='characters'
+              readOnly={editing}
             />
 
             <CustomInput
@@ -146,6 +238,7 @@ export default function CreateCarPage () {
               autoCapitalize='characters'
               onChange={handleChange}
               onBlur={handleBlur}
+              readOnly={editing}
             />
 
             <CustomInput
@@ -161,6 +254,7 @@ export default function CreateCarPage () {
               autoComplete='off'
               error={errors}
               touched={touched}
+              readOnly={editing}
             />
 
             <CustomInput
@@ -175,6 +269,7 @@ export default function CreateCarPage () {
               error={errors}
               touched={touched}
               autoComplete='off'
+              readOnly={editing}
             />
 
             <CustomInput
@@ -208,6 +303,7 @@ export default function CreateCarPage () {
               autoComplete='off'
               error={errors}
               touched={touched}
+              readOnly={editing}
             />
 
             <CustomInput
@@ -222,6 +318,7 @@ export default function CreateCarPage () {
               autoComplete='off'
               error={errors}
               touched={touched}
+              readOnly={editing}
             />
 
             <CustomInput
@@ -236,6 +333,7 @@ export default function CreateCarPage () {
               error={errors}
               touched={touched}
               autoComplete='off'
+              readOnly={editing}
             />
 
             <div className='pt-4'>
@@ -244,7 +342,13 @@ export default function CreateCarPage () {
                 disabled={isSubmitting || !isValid}
                 className='w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:bg-gray-400 transition'
               >
-                Create Car Profile
+                {isSubmitting && !editing
+                  ? 'Creating car profile'
+                  : isSubmitting && editing
+                  ? 'Updating car profile'
+                  : editing
+                  ? 'Update car profile'
+                  : 'Create Car Profile'}
               </button>
             </div>
           </Form>

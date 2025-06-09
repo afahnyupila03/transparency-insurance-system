@@ -2,7 +2,7 @@ import React from 'react'
 import { Field } from 'formik'
 import IconComponent from './IconComponent'
 
-export default function CustomInput({
+export default function CustomInput ({
   id,
   name,
   error,
@@ -13,30 +13,36 @@ export default function CustomInput({
   showPassword,
   value,
   togglePassword,
+  children,
   ...props
 }) {
   const isError = error[name] && touched[name]
 
   return (
-    <div className="mb-4">
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
+    <div className='mb-4'>
+      <label
+        htmlFor={id}
+        className='block text-sm font-medium text-gray-700 mb-1'
+      >
         {label}
       </label>
 
-      <div className="relative">
+      <div className='relative'>
         {props.as === 'select' ? (
           <Field
-            as="select"
+            as='select'
             name={name}
             id={id}
             className={`w-full px-3 py-2 border ${
               isError ? 'border-red-500' : 'border-gray-300'
             } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
             {...props}
-          />
+          >
+            {children}
+          </Field>
         ) : props.as === 'textarea' ? (
           <Field
-            as="textarea"
+            as='textarea'
             name={name}
             id={id}
             rows={rows}
@@ -60,20 +66,20 @@ export default function CustomInput({
         {/* Toggle password icon */}
         {name === 'password' && value && (
           <button
-            type="button"
+            type='button'
             onClick={togglePassword}
-            className="absolute inset-y-0 right-2 flex items-center text-gray-500"
+            className='absolute inset-y-0 right-2 flex items-center text-gray-500'
           >
             {showPassword ? (
-              <IconComponent name="IoIosEyeOff" />
+              <IconComponent name='IoIosEyeOff' />
             ) : (
-              <IconComponent name="IoIosEye" />
+              <IconComponent name='IoIosEye' />
             )}
           </button>
         )}
       </div>
 
-      {isError && <p className="text-sm text-red-500 mt-1">{error[name]}</p>}
+      {isError && <p className='text-sm text-red-500 mt-1'>{error[name]}</p>}
     </div>
   )
 }

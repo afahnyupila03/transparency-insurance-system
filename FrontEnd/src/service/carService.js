@@ -66,12 +66,14 @@ export const updateCarService = async (id, payload) => {
   return data
 }
 
-export const updateCarStatusService = async (id, payload) => {
+export const updateCarStatusService = async (id, status) => {
   const res = await fetch(
     `http://localhost:3000/update-car-status/${id}`,
-    getHeaders('PUT', payload)
+    getHeaders('PUT', { status })
   )
   const data = await res.json()
 
   if (!res.ok) throw new Error(data.error)
+
+  return data
 }
