@@ -1,6 +1,6 @@
-import { useCars, useUpdateCarStatus } from '../../hooks/carHook'
 import { useNavigate } from 'react-router-dom'
 import CarListContainer from '../../components/CarListItems'
+import { useCars, useUpdateCarStatus } from '../../hooks/carHook'
 
 const carActions = (car, zone) => {
   const status = car.status
@@ -28,7 +28,7 @@ const carActions = (car, zone) => {
       {
         id,
         type: 'link',
-        link: `${id}`,
+        link: `cars/${id}`,
         query: {
           zone
         },
@@ -81,11 +81,11 @@ const carActions = (car, zone) => {
   return actions[status] || []
 }
 
-export default function Dashboard () {
+export default function CarsPage () {
   const { cars, isLoading, isError, error } = useCars()
-  const navigate = useNavigate()
-
   const updateCarStatus = useUpdateCarStatus()
+
+  const navigate = useNavigate()
 
   const isAccessDenied =
     isError && error?.message === 'Access denied. You are not a car owner'
