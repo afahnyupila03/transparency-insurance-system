@@ -18,7 +18,7 @@ export const useCars = () => {
     staleTime: 10 * 60 * 1000
   })
 
-  const cars =data?.data
+  const cars = data?.data?.filter(car => car.status !== 'deleted')
 
   return { cars, refetch, isLoading, isError, error }
 }
