@@ -32,6 +32,7 @@ export default function DropdownComponent ({ actions, actionHandler }) {
                           search: new URLSearchParams(action.query).toString()
                         })
                       }}
+                      onClick={toggleDropdown}
                       className='block px-4 py-2 hover:bg-gray-100'
                     >
                       {action.label}
@@ -43,7 +44,10 @@ export default function DropdownComponent ({ actions, actionHandler }) {
                   <li key={index}>
                     <button
                       type='button'
-                      onClick={() => actionHandler(action)}
+                      onClick={() => {
+                        toggleDropdown()
+                        actionHandler(action)
+                      }}
                       className='w-full text-left px-4 py-2 hover:bg-gray-100'
                     >
                       {action.label}

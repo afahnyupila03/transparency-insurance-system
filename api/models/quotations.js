@@ -19,7 +19,9 @@ const quotationSchema = new Schema(
     fc: { type: Number, required: true },
     tariff: { type: Number, required: true },
     discount: { type: Number, required: true },
-    dta: { type: Number }
+    dta: { type: Number },
+    startDate: { type: Date, required: true },
+    endDate: { type: Date, required: true }
   },
   { timestamps: true }
 )

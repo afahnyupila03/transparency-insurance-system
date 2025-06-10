@@ -181,7 +181,7 @@ export const AppProvider = ({ children }) => {
         payload: { user: data }
       })
 
-      navigate('/dashboard', { replace: true })
+      navigate('/cars', { replace: true })
 
       dispatch({
         type: CONSTANTS.SET_LOADING,
@@ -214,7 +214,7 @@ export const AppProvider = ({ children }) => {
         payload: { user: data }
       })
 
-      navigate('/dashboard', { replace: true })
+      navigate('/cars', { replace: true })
 
       dispatch({
         type: CONSTANTS.SET_LOADING,
