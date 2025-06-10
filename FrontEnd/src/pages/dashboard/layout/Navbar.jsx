@@ -1,20 +1,17 @@
-import React from "react";
-import { Link } from "react-router-dom";
-// import "../App.css";
+import React from 'react'
+import { Link } from 'react-router-dom'
 
-function Navbar() {
-
-
+function Navbar () {
   return (
-    <nav className="navbar">
-      <div>
-        <Link to="/dashboard" className="navbar-title">Transparency Insurance</Link>
-      </div>
-      <div className="navbar-links">
-       
-      </div>
-    </nav>
-  );
+    <div className='w-full flex justify-end px-6 py-4 bg-white shadow-sm'>
+      <Link
+        to='/cars'
+        className='text-sm font-medium text-blue-600 bg-blue-100 hover:bg-blue-200 px-4 py-2 rounded-full transition'
+      >
+        Transparency Insurance / Cars
+      </Link>
+    </div>
+  )
 }
 
-export default Navbar;
+export default Navbar

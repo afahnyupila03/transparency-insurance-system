@@ -3,6 +3,7 @@ import CarDetailsPage from '../pages/cars/carDetails'
 import CarsPage from '../pages/cars/cars'
 import CreateCarPage from '../pages/cars/createCar'
 import Dashboard from '../pages/dashboard/Dashboard'
+import PoliciesPage from '../pages/policies/policies'
 
 export const mainNavigation = [
   {
@@ -11,7 +12,7 @@ export const mainNavigation = [
   },
   {
     path: 'dashboard',
-    element: <Dashboard />
+    element: <CarsPage />
   },
   {
     path: 'create-car',
@@ -28,5 +29,9 @@ export const mainNavigation = [
   {
     path: 'cars/:id',
     element: <CarDetailsPage />
+  },
+  {
+    path: 'policies',
+    element: <PoliciesPage />
   }
 ]

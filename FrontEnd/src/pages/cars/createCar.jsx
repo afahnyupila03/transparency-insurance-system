@@ -76,7 +76,7 @@ export default function CreateCarPage () {
       actions.resetForm({
         values: initialValues
       })
-      navigate('/dashboard')
+      navigate('/cars')
     } catch (error) {
       console.error(error)
       actions.setSubmitting(false)

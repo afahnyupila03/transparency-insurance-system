@@ -16,68 +16,86 @@ export default function CustomInput ({
   children,
   ...props
 }) {
-  const isError = error[name] && touched[name]
+  const isError = error?.[name] && touched?.[name]
 
   return (
     <div className='mb-4'>
-      <label
-        htmlFor={id}
-        className='block text-sm font-medium text-gray-700 mb-1'
-      >
-        {label}
-      </label>
-
-      <div className='relative'>
-        {props.as === 'select' ? (
+      {type === 'checkbox' ? (
+        <div className='flex items-center space-x-2'>
           <Field
-            as='select'
+            type='checkbox'
             name={name}
             id={id}
-            className={`w-full px-3 py-2 border ${
-              isError ? 'border-red-500' : 'border-gray-300'
-            } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
-            {...props}
-          >
-            {children}
-          </Field>
-        ) : props.as === 'textarea' ? (
-          <Field
-            as='textarea'
-            name={name}
-            id={id}
-            rows={rows}
-            className={`w-full px-3 py-2 border ${
-              isError ? 'border-red-500' : 'border-gray-300'
-            } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            className={`h-4 w-4 text-blue-600 border-gray-300 rounded ${
+              isError ? 'border-red-500' : ''
+            }`}
             {...props}
           />
-        ) : (
-          <Field
-            type={type === 'password' && showPassword ? 'text' : type}
-            name={name}
-            id={id}
-            className={`w-full px-3 py-2 pr-10 border ${
-              isError ? 'border-red-500' : 'border-gray-300'
-            } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
-            {...props}
-          />
-        )}
-
-        {/* Toggle password icon */}
-        {name === 'password' && value && (
-          <button
-            type='button'
-            onClick={togglePassword}
-            className='absolute inset-y-0 right-2 flex items-center text-gray-500'
+          <label htmlFor={id} className='text-sm font-medium text-gray-700'>
+            {label}
+          </label>
+        </div>
+      ) : (
+        <>
+          <label
+            htmlFor={id}
+            className='block text-sm font-medium text-gray-700 mb-1'
           >
-            {showPassword ? (
-              <IconComponent name='IoIosEyeOff' />
+            {label}
+          </label>
+
+          <div className='relative'>
+            {props.as === 'select' ? (
+              <Field
+                as='select'
+                name={name}
+                id={id}
+                className={`w-full px-3 py-2 border ${
+                  isError ? 'border-red-500' : 'border-gray-300'
+                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                {...props}
+              >
+                {children}
+              </Field>
+            ) : props.as === 'textarea' ? (
+              <Field
+                as='textarea'
+                name={name}
+                id={id}
+                rows={rows}
+                className={`w-full px-3 py-2 border ${
+                  isError ? 'border-red-500' : 'border-gray-300'
+                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                {...props}
+              />
             ) : (
-              <IconComponent name='IoIosEye' />
+              <Field
+                type={type === 'password' && showPassword ? 'text' : type}
+                name={name}
+                id={id}
+                className={`w-full px-3 py-2 pr-10 border ${
+                  isError ? 'border-red-500' : 'border-gray-300'
+                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                {...props}
+              />
             )}
-          </button>
-        )}
-      </div>
+
+            {name === 'password' && value && (
+              <button
+                type='button'
+                onClick={togglePassword}
+                className='absolute inset-y-0 right-2 flex items-center text-gray-500'
+              >
+                {showPassword ? (
+                  <IconComponent name='IoIosEyeOff' />
+                ) : (
+                  <IconComponent name='IoIosEye' />
+                )}
+              </button>
+            )}
+          </div>
+        </>
+      )}
 
       {isError && <p className='text-sm text-red-500 mt-1'>{error[name]}</p>}
     </div>

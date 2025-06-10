@@ -6,13 +6,13 @@ import DTA from '../models/dta.js'
 import Zone from '../models/zone.js'
 import User from '../models/user.js'
 import Quotation from '../models/quotations.js'
+import mongoose from 'mongoose'
 
 export const carPolicies = {
   getEligiblePolicies: async (req, res) => {
     try {
       const userId = req.user.id
-      const { zone } = req.query
-      const { id } = req.params
+      const { id, zone } = req.query
 
       const car = await Car.findOne({ _id: id, user: userId })
 
@@ -22,9 +22,13 @@ export const carPolicies = {
         })
       }
 
-      const location = await Zone.findOne({
-        name: zone
-      })
+      if (!mongoose.Types.ObjectId.isValid(zone)) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          error: 'Invalid zone ID'
+        })
+      }
+
+      const location = await Zone.findById(zone)
 
       if (!location) {
         return res.status(StatusCodes.NOT_FOUND).json({
@@ -54,7 +58,11 @@ export const carPolicies = {
       let fuel
       if (energy === 'ESS' || energy === 'ESSENCE' || energy === 'PATROL') {
         fuel = 'ESSENCE'
-      } else if (energy === 'GAS OIL' || energy === 'DIESEL' || energy === 'GAS') {
+      } else if (
+        energy === 'GAS OIL' ||
+        energy === 'DIESEL' ||
+        energy === 'GAS'
+      ) {
         fuel = 'DIESEL'
       }
 
@@ -74,7 +82,7 @@ export const carPolicies = {
 
       if (!policy) {
         return res.status(StatusCodes.BAD_REQUEST).json({
-          error: 'N policy exist for selected vehicle'
+          error: 'No policy exist for selected vehicle'
         })
       }
 
@@ -94,7 +102,7 @@ export const carPolicies = {
 
       res.status(StatusCodes.OK).json({
         message: 'Policy for car fetched',
-        data: { policy, dta, responsibilities }
+        data: { policy, dta, responsibilities, car, location }
       })
     } catch (error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -107,11 +115,12 @@ export const carPolicies = {
     try {
       const userId = req.user.id
 
-      const { id } = req.params
-      const { zone } = req.query
+      const { id, zone } = req.query
 
-      const { tariff, period, acc, cr, fc } = req.body
+      const { tariff, period, acc, cr, fc, startDate, endDate } = req.body
       let dta = req.body.dta // for safety
+
+      console.log('values to be calculated: ', tariff, period, acc, cr, fc)
 
       const car = await Car.findOne({ _id: id, user: userId })
       if (!car) {
@@ -121,7 +130,17 @@ export const carPolicies = {
       }
       const regNum = car.regNum
 
-      const location = await Zone.findOne({ zone })
+      console.log('zone query: ', zone)
+      let zoneObjectId
+      try {
+        zoneObjectId = new mongoose.Types.ObjectId(zone)
+      } catch (err) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          error: 'Invalid zone ID format'
+        })
+      }
+
+      const location = await Zone.findOne({ _id: zoneObjectId })
       if (!location) {
         return res.status(StatusCodes.NOT_FOUND).json({
           error: 'Zone not found'
@@ -129,7 +148,7 @@ export const carPolicies = {
       }
 
       // Apply base 10% discount.
-      let discount = tariff - tariff * 0.1
+      let discount = tariff - 0.1
 
       // Apply additional discount based on period
       const validPeriod = parseInt(period)
@@ -150,20 +169,42 @@ export const carPolicies = {
 
       discount = discount * extraDiscount
 
-      const vat = acc + TPN * 0.1925
+      const vat = (acc + discount + fc) * 0.1925
 
       let total
       if (dta) {
-        total = TPN + vat + acc + fc + cr + dta
+        total = discount + vat + acc + fc + cr + dta
       } else {
-        total = TPN + vat + acc + fc + cr
+        total = discount + vat + acc + fc + cr
       }
 
       let data
       if (dta) {
-        data = { total, vat, fc, cr, tariff, discount, dta }
+        data = {
+          total,
+          vat,
+          fc,
+          cr,
+          tariff,
+          discount,
+          dta,
+          validPeriod,
+          startDate,
+          endDate
+        }
       } else {
-        data = { total, vat, fc, cr, tariff, discount }
+        data = {
+          total,
+          vat,
+          fc,
+          cr,
+          acc,
+          tariff,
+          discount,
+          validPeriod,
+          startDate,
+          endDate
+        }
       }
 
       res.status(StatusCodes.CREATED).json({
@@ -179,11 +220,10 @@ export const carPolicies = {
   },
   saveQuotation: async (req, res) => {
     try {
-      const { id } = req.params
-      const { zone } = req.query
+      const { id, zone } = req.query
       const userId = req.user.id
 
-      const { total, vat, fc, tariff, discount } = req.body
+      const { total, vat, fc, tariff, discount, startDate, endDate } = req.body
       let dta = req.body.dta
 
       const user = await User.findById(userId)
@@ -196,13 +236,21 @@ export const carPolicies = {
       }
       const carId = car._id
 
-      const location = await Zone.findOne({ zone })
+      let zoneObjectId
+      try {
+        zoneObjectId = new mongoose.Types.ObjectId(zone)
+      } catch (err) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          error: 'Invalid zone ID format'
+        })
+      }
+
+      const location = await Zone.findOne({ _id: zoneObjectId })
       if (!location) {
         return res.status(StatusCodes.NOT_FOUND).json({
           error: 'Zone not found'
         })
       }
-      const zoneId = location._id
 
       const insurance = new Quotation({
         total,
@@ -211,16 +259,19 @@ export const carPolicies = {
         tariff,
         discount,
         dta,
-        zone: zoneId,
-        user: userId,
-        car: carId
+        zone: location,
+        user,
+        car: carId,
+        startDate,
+        endDate
       })
 
       const quotation = await insurance.save()
       car.quotation.push(quotation._id)
       await car.save()
 
-      res.status(StatusCodes.Ok).json({
+      console.log('to be save quotation: ', quotation)
+      res.status(StatusCodes.OK).json({
         message: 'Quotation saved',
         data: quotation
       })
