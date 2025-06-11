@@ -437,6 +437,7 @@ const CalculatedInsurance = ({ data, saveQuotationHandler }) => {
     tariff,
     validPeriod,
     vat,
+    dta,
     total
   } = data.data
 
@@ -495,8 +496,18 @@ const CalculatedInsurance = ({ data, saveQuotationHandler }) => {
         <p>
           <strong>Cate Rose (CR):</strong> {cr.toLocaleString()} FCFA
         </p>
+        {dta ? (
+          <p>
+            <strong>D.T.A: </strong>{' '}
+            <span className='font-medium'>{dta.toLocaleString()} FCFA</span>
+          </p>
+        ) : null}
         <p className='text-lg font-semibold text-blue-700'>
-          Total Quotation: {Math.ceil(total).toLocaleString()} FCFA
+          Total Quotation:{' '}
+          {dta
+            ? 'PN + ACC + VAT + CR + FC + D.T.A'
+            : 'PN + ACC + VAT + CR + FC'}{' '}
+          {Math.ceil(total).toLocaleString()} FCFA
         </p>
       </div>
       <div className='pt-4 text-right'>

@@ -192,7 +192,7 @@ export const AppProvider = ({ children }) => {
         type: CONSTANTS.ERROR,
         payload: { error: error }
       })
-      throw error
+      throw new Error(error)
     }
   }
 
@@ -279,7 +279,7 @@ export const AppProvider = ({ children }) => {
       // Save current path before directing to login.
       localStorage.setItem('redirectAfterAuth', pathname)
       console.log('redirectAfterAuth: ', pathname)
-      // navigate('/authentication', { replace: true })
+      navigate('/authentication', { replace: true })
 
       dispatch({
         type: CONSTANTS.SET_LOADING,

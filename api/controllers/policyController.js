@@ -188,10 +188,12 @@ export const carPolicies = {
           tariff,
           discount,
           dta,
+          acc,
           validPeriod,
           startDate,
           endDate
         }
+        console.log('data wih dta: ', data)
       } else {
         data = {
           total,

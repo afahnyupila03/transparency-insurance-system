@@ -23,15 +23,29 @@ export default function DropdownComponent ({ actions, actionHandler }) {
           <ul className='py-1 text-sm text-gray-700'>
             {actions?.map((action, index) => {
               if (action.type === 'link') {
+                // Destructure and separate hash if present
+                let to
+                if (action.link.startsWith('#')) {
+                  to = {
+                    pathname: '', // or use current path if you like, via useLocation().pathname
+                    hash: action.link,
+                    ...(action.query && {
+                      search: new URLSearchParams(action.query).toString()
+                    })
+                  }
+                } else {
+                  to = {
+                    pathname: action.link,
+                    ...(action.query && {
+                      search: new URLSearchParams(action.query).toString()
+                    })
+                  }
+                }
+
                 return (
                   <li key={index}>
                     <Link
-                      to={{
-                        pathname: action.link,
-                        ...(action.query && {
-                          search: new URLSearchParams(action.query).toString()
-                        })
-                      }}
+                      to={to}
                       onClick={toggleDropdown}
                       className='block px-4 py-2 hover:bg-gray-100'
                     >

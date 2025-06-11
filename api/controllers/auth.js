@@ -64,7 +64,7 @@ export const userProfiles = {
       const user = await User.findOne({ email: email })
 
       if (!user) {
-        return res.status(StatusCodes.BAD_REQUEST).json({
+        return res.status(StatusCodes.NOT_FOUND).json({
           error: 'No user with email exist, please create account.'
         })
       }
