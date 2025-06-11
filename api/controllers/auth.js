@@ -4,8 +4,8 @@ import Logout from './../models/logout.js'
 import { StatusCodes } from 'http-status-codes'
 import bcrypt from 'bcrypt'
 
-const generateToken = user =>
-  jwt.sign(
+const generateToken = user => {
+  return jwt.sign(
     {
       id: user._id,
       email: user.email
@@ -15,32 +15,38 @@ const generateToken = user =>
       expiresIn: '7d'
     }
   )
+}
 
 export const userProfiles = {
   register: async (req, res) => {
     try {
+      console.log('Register endpoint hit')
       const { email, password } = req.body
 
-      const existingUser = await User.find({ email: email })
+      const existingUser = await User.findOne({ email: email })
+      console.log(existingUser)
 
       if (existingUser) {
         return res.status(StatusCodes.BAD_REQUEST).json({
-          error: 'User with account already exist.'
+          message: 'User with account already exist.'
         })
       }
 
-      const hashedPassword = await bcrypt.hash(password, 24)
+      const hashedPassword = await bcrypt.hash(password, 10)
 
       const user = new User({
         email,
         password: hashedPassword
       })
+      console.log(user)
 
       const data = await user.save()
 
       const token = generateToken(data)
 
-      res.status(StatusCodes.CREATED).json({
+      console.log(data, token)
+
+      return res.status(StatusCodes.CREATED).json({
         message: 'User created',
         data,
         token
@@ -58,7 +64,7 @@ export const userProfiles = {
       const user = await User.findOne({ email: email })
 
       if (!user) {
-        return res.status(StatusCodes.BAD_REQUEST).json({
+        return res.status(StatusCodes.NOT_FOUND).json({
           error: 'No user with email exist, please create account.'
         })
       }
@@ -132,7 +138,7 @@ export const userProfiles = {
   },
   getUser: async (req, res) => {
     try {
-      const userId = req.userId
+      const userId = req.user.id
 
       // if (!userId) {
       //   return res.status(StatusCodes.UNAUTHORIZED).json({
