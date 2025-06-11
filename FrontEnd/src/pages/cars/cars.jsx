@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import CarListContainer from '../../components/CarListItems'
 import { useCars, useUpdateCarStatus } from '../../hooks/carHook'
 import { Fragment, useState, useEffect, useRef } from 'react'
@@ -38,8 +38,9 @@ const carActions = car => {
       {
         id,
         type: 'link',
-        link: `cars/${id}/quotations`,
-        label: 'Quotation history',
+        link: '#',
+        // link: `cars/${id}/quotations`,
+        label: 'Quotation history (Coming soon)',
         key: 'quotationHistory'
       },
       {
@@ -150,6 +151,7 @@ export default function CarsPage () {
         ) : isError ? (
           <div className='bg-red-100 border border-red-300 p-4 rounded text-red-700 text-center max-w-md mx-auto'>
             <p>{error.message}</p>
+            <Link to='/authentication'></Link>
           </div>
         ) : (
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>

@@ -117,11 +117,12 @@ export default function Authentication () {
               <button
                 type='submit'
                 disabled={(isSubmitting && loading) || !isValid}
-                className={`w-full mt-6 py-2 rounded-md text-white font-semibold ${
-                  loading
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700'
-                }`}
+                className={`w-full mt-6 py-2 rounded-md text-white font-semibold
+    ${
+      loading || !isValid
+        ? 'bg-gray-400 cursor-not-allowed'
+        : 'bg-blue-600 hover:bg-blue-700'
+    }`}
               >
                 {loading ? 'Loading...' : existingUser ? 'Sign Up' : 'Login'}
               </button>
