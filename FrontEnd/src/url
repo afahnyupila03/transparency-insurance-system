@@ -1,0 +1,2 @@
+
+export const BASE_URL = 'https://transparency-insurance-system.onrender.com'

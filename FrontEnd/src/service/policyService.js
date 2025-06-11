@@ -1,3 +1,7 @@
+import { BASE_URL } from "../url"
+
+
+
 function getHeaders (method, payload) {
   const token = localStorage.getItem('token')
   if (!token) {
@@ -29,7 +33,7 @@ export const getZonesService = async ({
   limit = 10
 }) => {
   const res = await fetch(
-    `http://localhost:3000/zones?search=${search}&limit=${limit}&skip=${skip}`,
+    `${BASE_URL}/zones?search=${search}&limit=${limit}&skip=${skip}`,
     getHeaders('GET')
   )
   const data = await res.json()
@@ -42,7 +46,7 @@ export const getZonesService = async ({
 export const getPolicyService = async (id, zone) => {
   try {
     const res = await fetch(
-      `http://localhost:3000/policy/get?id=${id}&zone=${zone}`,
+      `${BASE_URL}/policy/get?id=${id}&zone=${zone}`,
       getHeaders('GET')
     )
 
@@ -58,7 +62,7 @@ export const getPolicyService = async (id, zone) => {
 
 export const calculatePolicyService = async (id, zone, payload) => {
   const res = await fetch(
-    `http://localhost:3000/policy/calculate?id=${id}&zone=${zone}`,
+    `${BASE_URL}/policy/calculate?id=${id}&zone=${zone}`,
     getHeaders('POST', payload)
   )
 
@@ -71,7 +75,7 @@ export const calculatePolicyService = async (id, zone, payload) => {
 
 export const savePolicyService = async (id, zone, payload) => {
   const res = await fetch(
-    `http://localhost:3000/policy/save-quotation?id=${id}&zone=${zone}`,
+    `${BASE_URL}/policy/save-quotation?id=${id}&zone=${zone}`,
     getHeaders('POST', payload)
   )
 
