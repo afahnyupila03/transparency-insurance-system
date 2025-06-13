@@ -31,7 +31,7 @@ const carSchema = new Schema(
     genre: {
       type: String,
       required: true,
-      match: /^[A-Z]{2,}$/
+      match: /^[A-Z ]+$/
     },
     type: {
       type: String,

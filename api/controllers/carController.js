@@ -35,9 +35,26 @@ export const carProfiles = {
         })
       }
 
-      const existingRegNum = await Car.findOne({ regNum: regNum })
+      const existingDeletedCar = await Car.findOne({
+        regNum: regNum,
+        chassisNumber: chassisNumber,
+        status: 'deleted'
+      })
+
+      const existingRegNum = await Car.findOne({
+        regNum: regNum,
+        status: { $ne: 'deleted' }
+      })
+
+      if (existingRegNum) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          error: `Car profile with registration number ${regNum} already exist in system.`
+        })
+      }
+
       const existingChassisNumber = await Car.findOne({
-        chassisNumber: chassisNumber
+        chassisNumber: chassisNumber,
+        status: { $ne: 'deleted' }
       })
 
       if (existingChassisNumber) {
@@ -46,9 +63,38 @@ export const carProfiles = {
         })
       }
 
-      if (existingRegNum) {
-        return res.status(StatusCodes.BAD_REQUEST).json({
-          error: `Car profile with registration number ${regNum} already exist in system.`
+      if (existingDeletedCar) {
+        // set status to enabled.
+        existingDeletedCar.status = 'enabled'
+
+        // Incase of existing deleted car has new field values, update.
+        existingDeletedCar.set({
+          name,
+          address,
+          regNum,
+          genre,
+          type,
+          mark,
+          chassisNumber,
+          energy,
+          hpRating: parseInt(hpRating),
+          numberOfSeats: parseInt(numberOfSeats),
+          carryingCapacity: parseInt(carryingCapacity),
+          firstYear,
+          user: user._id
+        })
+        // save car.
+        await existingDeletedCar.save()
+
+        // update user.car_array.
+        user.car.push(existingDeletedCar._id)
+
+        // save user.
+        await user.save()
+
+        return res.status(StatusCodes.OK).json({
+          message: 'Existing deleted car restored and updated',
+          data: existingDeletedCar
         })
       }
 
@@ -80,6 +126,7 @@ export const carProfiles = {
         data
       })
     } catch (error) {
+      console.log('create car error: ', error)
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         message: 'Error creating user car profile',
         error: error.message
