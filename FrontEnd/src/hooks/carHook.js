@@ -39,13 +39,17 @@ export const useCreateCar = () => {
   const { mutateAsync: createCar } = useMutation({
     mutationFn: payload => createCarService(payload),
     onSuccess: data => {
-      queryClient.setQueryData(['cars'], old =>
+      if (data?.data) {
+        toast.success(data?.message)
+      }
+      queryClient.setQueryData(['cars'], old => {
         old ? [...old, data.data] : [data.data]
-      )
+      })
     },
     onError: error => {
+      const errMsg = error?.response?.data?.message || error?.message
       console.error('Failed to create car: ', error)
-      toast.error('Could not create car, please try again.')
+      toast.error(errMsg)
     },
     onSettled: (data, error) => {
       queryClient.invalidateQueries({ queryKey: ['cars'] })
