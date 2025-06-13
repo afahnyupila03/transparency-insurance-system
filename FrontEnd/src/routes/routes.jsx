@@ -4,6 +4,7 @@ import CarsPage from '../pages/cars/cars'
 import CreateCarPage from '../pages/cars/createCar'
 import Dashboard from '../pages/dashboard/Dashboard'
 import PoliciesPage from '../pages/policies/policies'
+import QuotationsPage from '../pages/quotations/quotationsPage'
 
 export const mainNavigation = [
   {
@@ -33,5 +34,9 @@ export const mainNavigation = [
   {
     path: 'policies',
     element: <PoliciesPage />
+  },
+  {
+    path: 'quotations',
+    element: <QuotationsPage />
   }
 ]
