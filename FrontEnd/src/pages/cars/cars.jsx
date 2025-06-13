@@ -35,14 +35,16 @@ const carActions = car => {
         label: 'Eligible Policy',
         key: 'eligiblePolicy'
       },
-      // {
-      //   id,
-      //   type: 'link',
-      //   link: '#',
-      //   // link: `cars/${id}/quotations`,
-      //   label: 'Quotation history (Coming soon)',
-      //   key: 'quotationHistory'
-      // },
+      {
+        id,
+        type: 'link',
+        link: `/quotations`,
+        query: {
+          car_id: id
+        },
+        label: 'Quotation history ',
+        key: 'quotationHistory'
+      },
       {
         id,
         type: 'button',
