@@ -22,7 +22,7 @@ const carActions = car => {
       {
         id,
         type: 'link',
-        link: `cars/${id}`,
+        link: `/create-car/${id}`,
         query: {
           editing: true
         },
@@ -35,14 +35,14 @@ const carActions = car => {
         label: 'Eligible Policy',
         key: 'eligiblePolicy'
       },
-      {
-        id,
-        type: 'link',
-        link: '#',
-        // link: `cars/${id}/quotations`,
-        label: 'Quotation history (Coming soon)',
-        key: 'quotationHistory'
-      },
+      // {
+      //   id,
+      //   type: 'link',
+      //   link: '#',
+      //   // link: `cars/${id}/quotations`,
+      //   label: 'Quotation history (Coming soon)',
+      //   key: 'quotationHistory'
+      // },
       {
         id,
         type: 'button',

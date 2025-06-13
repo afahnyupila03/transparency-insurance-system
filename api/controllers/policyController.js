@@ -152,7 +152,7 @@ export const carPolicies = {
 
       // Apply additional discount based on period
       const validPeriod = parseInt(period)
-      let extraDiscount
+      let extraDiscount = 1
 
       if (validPeriod === 2) {
         extraDiscount = 0.2
