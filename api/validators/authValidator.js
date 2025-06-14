@@ -1,6 +1,5 @@
 import * as yup from 'yup'
-import User from './../models/user'
-import bcrypt from 'bcrypt'
+import User from './../models/user.js'
 
 export const authValidators = {
   registerSchema: yup.object({
@@ -37,7 +36,7 @@ export const authValidators = {
         async value => {
           if (!value) return false
           const newEmail = await User.findOne({ email: value })
-          return !newEmail
+          return newEmail
         }
       ),
     password: yup.string().required('Please enter password')
@@ -50,7 +49,6 @@ export const authValidators = {
       .min(4, 'Name must at least 4 characters'),
     phone: yup
       .number()
-      .trim()
       .required('Phone number is required')
       .min(9, 'Phone number must be 9 digits long')
   }),
@@ -63,19 +61,21 @@ export const authValidators = {
       .test(
         'old_email',
         'New email can not be the same as old email',
-        async value => {
-          const { userId } = this.options.context
+        async function (value) {
+          const { userId } = this.options.context || {}
 
-          if (!value || !userId) return false
+          if (!value || !userId) return true
 
           const user = await User.findById(userId)
-          return user && user.email !== value
+          if (!user) return true
+
+          return user.email !== value.trim()
         }
       )
       .test(
         'existing_email',
         'Email already in use by another user',
-        async value => {
+        async function (value) {
           if (!value) return false
 
           const existingEmail = await User.findOne({ email: value.email })
