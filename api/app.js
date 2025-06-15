@@ -1,3 +1,7 @@
+import dotenv from 'dotenv'
+
+dotenv.config()
+
 import express from 'express'
 import http from 'http'
 import cookieParser from 'cookie-parser'
@@ -9,6 +13,7 @@ import seedPolicyRates from './seed/policy/seedPolicyRates.js'
 import seedDtaRates from './seed/dta/seedDtaRates.js'
 import seedZones from './seed/zone/seedZones.js'
 import seedResponsibility from './seed/responsibility/seedResponsiblity.js'
+
 
 const app = express()
 const server = http.createServer(app)
@@ -22,7 +27,7 @@ app.use(cookieParser())
 // CORS settings
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.CLIENT_URL,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
@@ -52,8 +57,7 @@ app.use((err, req, res, next) => {
 })
 
 // MongoDB connection
-const MONGO_URI =
-  'mongodb+srv://fulopila9:9qVjS5mTfmDVn2G2@cluster0.xzpen8o.mongodb.net/InsureConnect'
+const MONGO_URI = process.env.DB_URL
 
 // Run server immediately, and seed in background
 mongoose

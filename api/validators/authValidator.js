@@ -94,5 +94,23 @@ export const authValidators = {
         /[!@#$%^&*(),.?":{}|<>]/,
         'Password must have at least 1 special character'
       )
+  }),
+  requestRestPasswordSchema: yup.object({
+    email: yup
+      .string()
+      .trim()
+      .email('Please enter valid email format')
+      .required('Email is required')
+  }),
+  resetPasswordSchema: yup.object({
+    password: yup
+      .string()
+      .required('Password is required')
+      .min(6, 'Password must be 6 characters long')
+      .matches(/[A-Z]/, 'Password must include at least 1 uppercase letter')
+      .matches(
+        /[!@#$%^&*(),.?":{}|<>]/,
+        'Password must include at least 1 special character'
+      )
   })
 }

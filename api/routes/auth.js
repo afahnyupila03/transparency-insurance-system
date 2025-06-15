@@ -27,6 +27,17 @@ export const authRoutes = router => {
     middlewares.auth,
     asyncHandler(userProfiles.updatePassword)
   )
+  router.post(
+    '/request-password-reset',
+    // middlewares.auth, // A user can't be authenticated and requesting a password reset.
+    validate(authValidators.requestRestPasswordSchema),
+    asyncHandler(userProfiles.requestPasswordReset)
+  )
+  router.post(
+    '/reset-password',
+    validate(authValidators.resetPasswordSchema),
+    asyncHandler(userProfiles.resetPassword)
+  )
   router.put(
     '/update',
     validate(authValidators.updateProfileSchema),
