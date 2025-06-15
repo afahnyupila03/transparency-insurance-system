@@ -1,3 +1,6 @@
+import dotenv from 'dotenv'
+dotenv.config()
+
 import express from 'express'
 import http from 'http'
 import cookieParser from 'cookie-parser'
@@ -8,7 +11,7 @@ import UserRoutes from './routes/index.js'
 import seedPolicyRates from './seed/policy/seedPolicyRates.js'
 import seedDtaRates from './seed/dta/seedDtaRates.js'
 import seedZones from './seed/zone/seedZones.js'
-import seedResponsibility from './seed/responsibility/seedResponsiblity.js';
+import seedResponsibility from './seed/responsibility/seedResponsiblity.js'
 
 const app = express()
 const server = http.createServer(app)
@@ -22,7 +25,7 @@ app.use(cookieParser())
 // CORS settings
 app.use(
   cors({
-    origin: 'https://transparency-insurance-system-mcpo.vercel.app',
+    origin: `${process.env.CLIENT_URL}`,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
@@ -37,9 +40,22 @@ app.get('/', (req, res) => {
 // Routes
 app.use(UserRoutes)
 
+// Catch 404 errors and return JSON response
+app.use((req, res, next) => {
+  res.status(404).json({ message: 'Route not found' })
+  // next(createError(404, 'Route not found'))
+})
+
+// Error handler returning JSON instead of rendering a view
+app.use((err, req, res, next) => {
+  res.status(err.status || 500).json({
+    message: err.message || 'Internal Server Error',
+    error: req.app.get('env') === 'development' ? err : {}
+  })
+})
+
 // MongoDB connection
-const MONGO_URI =
-  'mongodb+srv://fulopila9:9qVjS5mTfmDVn2G2@cluster0.xzpen8o.mongodb.net/InsureConnect'
+const MONGO_URI = process.env.DB_URL
 
 // Run server immediately, and seed in background
 mongoose
