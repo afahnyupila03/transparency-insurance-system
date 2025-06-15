@@ -27,7 +27,7 @@ app.use(cookieParser())
 // CORS settings
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: 'https://transparency-insurance-system-mcpo.vercel.app',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true

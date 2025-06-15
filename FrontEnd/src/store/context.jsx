@@ -7,6 +7,7 @@ import {
 } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
+import { BASE_URL } from '../url'
 
 const CONSTANTS = {
   SIGN_IN: 'SIGN_IN',
@@ -74,7 +75,7 @@ export const AppProvider = ({ children }) => {
   const pathname = location.pathname
 
   const getApiUrl = async (endpoint, method, headers, payload) => {
-    const res = await fetch(`http://localhost:3000/${endpoint}`, {
+    const res = await fetch(`${BASE_URL}/${endpoint}`, {
       method: method,
       headers: headers,
       body: JSON.stringify(payload)

@@ -1,3 +1,7 @@
+import { BASE_URL } from "../url"
+
+
+
 function getHeaders (method, payload) {
   const token = localStorage.getItem('token')
   if (!token) {
@@ -25,7 +29,7 @@ function getHeaders (method, payload) {
 
 export const createCarService = async payload => {
   const res = await fetch(
-    'http://localhost:3000/create',
+    `${BASE_URL}/create`,
     getHeaders('POST', payload)
   )
 
@@ -37,7 +41,7 @@ export const createCarService = async payload => {
 }
 
 export const viewCarsService = async () => {
-  const res = await fetch('http://localhost:3000/cars', getHeaders('GET'))
+  const res = await fetch(`${BASE_URL}/cars`, getHeaders('GET'))
   const data = await res.json()
 
   if (!res.ok) throw new Error(data.error)
@@ -46,7 +50,7 @@ export const viewCarsService = async () => {
 }
 
 export const viewCarService = async id => {
-  const res = await fetch(`http://localhost:3000/car/${id}`, getHeaders('GET'))
+  const res = await fetch(`${BASE_URL}/car/${id}`, getHeaders('GET'))
   const data = await res.json()
 
   if (!res.ok) throw new Error(data.error)
@@ -56,7 +60,7 @@ export const viewCarService = async id => {
 
 export const updateCarService = async (id, payload) => {
   const res = await fetch(
-    `http://localhost:3000/update-car/${id}`,
+    `${BASE_URL}/update-car/${id}`,
     getHeaders('PUT', payload)
   )
   const data = await res.json()
@@ -68,7 +72,7 @@ export const updateCarService = async (id, payload) => {
 
 export const updateCarStatusService = async (id, status) => {
   const res = await fetch(
-    `http://localhost:3000/update-car-status/${id}`,
+    `${BASE_URL}/update-car-status/${id}`,
     getHeaders('PUT', { status })
   )
   const data = await res.json()
