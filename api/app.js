@@ -1,5 +1,4 @@
 import dotenv from 'dotenv'
-
 dotenv.config()
 
 import express from 'express'
@@ -14,7 +13,6 @@ import seedDtaRates from './seed/dta/seedDtaRates.js'
 import seedZones from './seed/zone/seedZones.js'
 import seedResponsibility from './seed/responsibility/seedResponsiblity.js'
 
-
 const app = express()
 const server = http.createServer(app)
 
@@ -27,7 +25,7 @@ app.use(cookieParser())
 // CORS settings
 app.use(
   cors({
-    origin: 'https://transparency-insurance-system-mcpo.vercel.app',
+    origin: `${process.env.CLIENT_URL}`,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
