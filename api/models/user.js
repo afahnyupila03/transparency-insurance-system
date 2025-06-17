@@ -18,11 +18,22 @@ const userSchema = new Schema(
       enum: ['enabled', 'disabled'],
       default: 'enabled'
     },
-    car: [{
-      type: Schema.Types.ObjectId,
-      ref: 'Car'
-    }],
-    isCarOwner: { type: Boolean, enum: [true, false], default: false }
+    car: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Car'
+      }
+    ],
+    isCarOwner: { type: Boolean, enum: [true, false], default: false },
+    status: {
+      type: String,
+      enum: ['enabled', 'deleted', 'deactivated'],
+      default: 'enabled'
+    },
+    deactivatedTime: {
+      type: Date,
+      default: null
+    }
   },
   { timestamps: true }
 )

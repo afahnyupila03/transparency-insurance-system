@@ -6,8 +6,6 @@ import sgMail from '@sendgrid/mail'
 // Init API key.
 sgMail.setApiKey(process.env.SEND_GRID_API_KEY)
 
-console.log('send grid key: ', process.env.SEND_GRID_API_KEY)
-
 /**
  * Send email using SendGrid
  * @param {Object} options
