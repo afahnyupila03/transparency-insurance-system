@@ -42,6 +42,23 @@ export const userProfiles = {
       token: result.token
     })
   },
+  updateProfileStatus: async (req, res) => {
+    const id = req.user.id
+    const { status } = req.body
+
+    const result = await authServices.updateUserStatus(id, status)
+
+    if (!result) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        error: 'Invalid valid status'
+      })
+    }
+
+    res.status(StatusCodes.OK).json({
+      message: 'Profile status updated',
+      data: result
+    })
+  },
   updateProfile: async (req, res) => {
     const { name, phone } = req.body
     const userId = req.user.id

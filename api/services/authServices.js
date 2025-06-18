@@ -70,6 +70,31 @@ export const authServices = {
 
     return { user, token }
   },
+  updateUserStatus: async (id, status) => {
+    if (!status || !['deactivated', 'deleted'].includes(status)) {
+      return null
+    }
+
+    const user = await User.findOne({ _id: id, status: 'enabled' })
+    if (!user) {
+      return null
+    }
+
+    if (status === 'deactivated') {
+      user.status = 'deactivated'
+      user.deactivatedTime = new Date()
+    }
+
+    if (status === 'deleted') {
+      // First set status to deactivated
+      user.status = 'deactivated'
+      user.deactivatedTime = new Date()
+    }
+
+    await user.save()
+
+    return user
+  },
   updateProfileService: async (id, name, phone) => {
     if (!name || !phone) {
       return null
