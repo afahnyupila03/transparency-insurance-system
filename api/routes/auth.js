@@ -1,7 +1,7 @@
 import { userProfiles } from '../controllers/auth.js'
 import { asyncHandler, validate } from '../middlewares/validate.js'
 import { authValidators } from '../validators/authValidator.js'
-import { middlewares } from './../middlewares/userAuth.js'
+import { authAuthorization } from './../middlewares/auth/userAuth.js'
 
 export const authRoutes = router => {
   router.post(
@@ -14,17 +14,23 @@ export const authRoutes = router => {
     validate(authValidators.loginSchema),
     asyncHandler(userProfiles.login)
   )
-  router.get('/me', middlewares.auth, asyncHandler(userProfiles.getUser))
+  router.put(
+    '/update-status',
+    authAuthorization.auth,
+    validate(authValidators.updateProfileSchema),
+    asyncHandler(userProfiles.updateProfileStatus)
+  )
+  router.get('/me', authAuthorization.auth, asyncHandler(userProfiles.getUser))
   router.put(
     '/update-email',
+    authAuthorization.auth,
     validate(authValidators.updateEmailSchema),
-    middlewares.auth,
     asyncHandler(userProfiles.updateEmail)
   )
   router.put(
     '/update-password',
     validate(authValidators.updatePasswordSchema),
-    middlewares.auth,
+    authAuthorization.auth,
     asyncHandler(userProfiles.updatePassword)
   )
   router.post(
@@ -41,8 +47,12 @@ export const authRoutes = router => {
   router.put(
     '/update',
     validate(authValidators.updateProfileSchema),
-    middlewares.auth,
+    authAuthorization.auth,
     asyncHandler(userProfiles.updateProfile)
   )
-  router.post('/logout', middlewares.auth, asyncHandler(userProfiles.logout))
+  router.post(
+    '/logout',
+    authAuthorization.auth,
+    asyncHandler(userProfiles.logout)
+  )
 }

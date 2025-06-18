@@ -1,12 +1,13 @@
 import { StatusCodes } from 'http-status-codes'
-import { middlewares } from '../middlewares/userAuth.js'
+import { authAuthorization } from '../middlewares/auth/userAuth.js'
 import Zone from '../models/zone.js'
+import { carAuthorization } from '../middlewares/authorization/carOwner.js'
 
 export const zoneRoute = router => {
   router.get(
     '/zones',
-    middlewares.auth,
-    middlewares.carOwner,
+    authAuthorization.auth,
+    carAuthorization.carOwner,
     async (req, res) => {
       try {
         const { limit = 10, skip = 0, search = '' } = req.query

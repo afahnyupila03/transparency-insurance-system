@@ -1,12 +1,11 @@
 import jwt from 'jsonwebtoken'
 import { StatusCodes } from 'http-status-codes'
-import Logout from './../models/logout.js'
-import User from './../models/user.js'
+import Logout from '../../models/logout.js'
+import User from '../../models/user.js'
 
-const JWT_SECRET =
-  'b089525428ab9a5cfb99a2d6a0f9f9994da5602e71548cbb51d78d17e4cf92a7'
+const JWT_SECRET = process.env.JWT_SECRET
 
-export const middlewares = {
+export const authAuthorization = {
   auth: async (req, res, next) => {
     try {
       const authHeader = req.get('Authorization')
@@ -62,47 +61,22 @@ export const middlewares = {
         })
       }
 
+      if (user.status !== 'enabled') {
+        return res.status(StatusCodes.FORBIDDEN).json({
+          error: 'Account is not active'
+        })
+      }
+
       req.user = {
         id: user._id,
-        email: user.email
+        email: user.email,
+        carOwner: user.isCarOwner
       }
 
       next()
     } catch (error) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         message: 'Failed to authenticate user',
-        error: error.message
-      })
-    }
-  },
-  carOwner: async (req, res, next) => {
-    try {
-      const userId = req.user.id
-
-      if (!userId) {
-        return res.status(StatusCodes.UNAUTHORIZED).json({
-          error: 'User not authenticated'
-        })
-      }
-
-      const user = await User.findById(userId)
-
-      if (!user) {
-        return res.status(StatusCodes.NOT_FOUND).json({
-          error: 'User not found'
-        })
-      }
-
-      if (!user.isCarOwner) {
-        return res.status(StatusCodes.FORBIDDEN).json({
-          error: 'Access denied. You are not a car owner'
-        })
-      }
-
-      next()
-    } catch (error) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        message: 'Failed to verify car owner status',
         error: error.message
       })
     }

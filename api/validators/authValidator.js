@@ -41,6 +41,9 @@ export const authValidators = {
       ),
     password: yup.string().required('Please enter password')
   }),
+  updateStatusSchema: yup.object({
+    status: yup.string().trim().required('Status is required')
+  }),
   updateProfileSchema: yup.object({
     name: yup
       .string()
