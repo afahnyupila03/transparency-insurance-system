@@ -7,11 +7,16 @@ import { sendEmail } from './mailServices.js'
 import { generateToken } from './../utils/jwt.js'
 
 const handleDeactivatedAccounts = async user => {
-  if (user.status === 'deactivated' && user.deactivatedTime) {
+  if (user.status === 'disabled') {
+    // Update user to enabled after successful login.
+    user.status = 'enabled'
+    await user.save()
+  } else if (user.status === 'deactivated' && user.deactivatedTime) {
     const now = new Date()
     const diffInDays = (now - user.deactivatedTime) / (1000 * 60 * 60 * 24)
 
     if (diffInDays > 30) {
+      // Update user to deleted after 30 days.
       user.status = 'deleted'
     } else {
       user.status = 'enabled'
@@ -20,7 +25,7 @@ const handleDeactivatedAccounts = async user => {
   }
 }
 
-const ACTIVE_STATUSES = ['enabled', 'deactivated']
+const ACTIVE_STATUSES = ['enabled', 'deactivated', 'disabled']
 const saltRounds = Number(process.env.BCRYPT_SALT)
 
 export const authServices = {
@@ -30,7 +35,8 @@ export const authServices = {
     if (
       existingUser &&
       (existingUser.status === 'enabled' ||
-        existingUser.status === 'deactivated')
+        existingUser.status === 'deactivated' ||
+        existingUser.status === 'disabled')
     ) {
       return null
     }
@@ -55,15 +61,15 @@ export const authServices = {
       return null
     }
 
+    const passwordMatch = await bcrypt.compare(password, user.password)
+    if (!passwordMatch) {
+      return null
+    }
+
     await handleDeactivatedAccounts(user)
 
     if (user.status === 'deleted') {
       return null // Just in case, after handleDeactivation.
-    }
-
-    const passwordMatch = await bcrypt.compare(password, user.password)
-    if (!passwordMatch) {
-      return null
     }
 
     const token = generateToken(user)
@@ -71,7 +77,7 @@ export const authServices = {
     return { user, token }
   },
   updateUserStatus: async (id, status) => {
-    if (!status || !['deactivated', 'deleted'].includes(status)) {
+    if (!status || !['deactivated', 'deleted', 'disabled'].includes(status)) {
       return null
     }
 
@@ -80,9 +86,8 @@ export const authServices = {
       return null
     }
 
-    if (status === 'deactivated') {
-      user.status = 'deactivated'
-      user.deactivatedTime = new Date()
+    if (status === 'disabled') {
+      user.status = 'disabled'
     }
 
     if (status === 'deleted') {

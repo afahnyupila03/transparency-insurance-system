@@ -27,7 +27,7 @@ const userSchema = new Schema(
     isCarOwner: { type: Boolean, enum: [true, false], default: false },
     status: {
       type: String,
-      enum: ['enabled', 'deleted', 'deactivated'],
+      enum: ['enabled', 'deleted', 'deactivated', 'disabled'],
       default: 'enabled'
     },
     deactivatedTime: {
