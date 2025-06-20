@@ -1,7 +1,18 @@
-import { quotations } from "../controllers/quotationController.js"
-import { middlewares } from "../middlewares/userAuth.js"
+import { quotations } from '../controllers/quotationController.js'
+import { carAuthorization } from '../middlewares/authorization/carOwner.js'
+import { authAuthorization } from '../middlewares/auth/userAuth.js'
 
 export const quotationRoute = router => {
-    router.get('/quotations', middlewares.auth, middlewares.carOwner, quotations.getAllQuotations)
-    router.get('/quotation/:id', middlewares.auth, middlewares.carOwner, quotations.getQuotation)
+  router.get(
+    '/quotations',
+    authAuthorization.auth,
+    carAuthorization.carOwner,
+    quotations.getAllQuotations
+  )
+  router.get(
+    '/quotation/:id',
+    authAuthorization.auth,
+    carAuthorization.carOwner,
+    quotations.getQuotation
+  )
 }
